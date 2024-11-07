@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    build: .
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: P@ssw0rd8080
+      POSTGRES_DB: rental
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./dump:/docker-entrypoint-initdb.d/dump
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  pgwatch2:
+    image: cybertec/pgwatch2:latest
+    container_name: pgwatch2_container
+    environment:
+      PW2_PGHOST: postgres
+      PW2_PGUSER: sa
+      PW2_PGPASSWORD: P@ssw0rd8080
+      PW2_PGDBNAME: rental
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  pgbadger_data:
